@@ -15,8 +15,9 @@ render_field:
 loop:
   xor eax, eax
   xor ecx, ecx
-  movb closed_cell, al  // кладем в al '#'
+
   loop2:  // печатаем колонки
+    movb closed_cell, al  // кладем в al '#'
     push eax
     call putchar
     add $4, esp
@@ -26,6 +27,11 @@ loop:
 
     incl ecx  // инрементим счетчик
     movl ecx, columns(ebp)
+
+    movb space, al  // кладем в al space 
+    push eax
+    call putchar
+    add $4, esp
     jmp loop2
 
   out2:
@@ -75,6 +81,9 @@ cursor:
 
 newline:
   .byte 10
+
+space:
+  .byte 32
 
 numbers:
   .asciz "0123456789"
