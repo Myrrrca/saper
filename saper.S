@@ -3,6 +3,28 @@
   .global main
   .att_syntax noprefix
 
+print_newline:  // портит только al
+  ENTER
+
+  movb newline, al  // кладем в al '\n'
+  push eax
+  call putchar  // печатаем новую строку
+  add $4, esp
+
+  leave
+  ret
+
+print_space:  // портит только al
+  ENTER
+
+  movb space, al  // кладем в al space 
+  push eax
+  call putchar
+  add $4, esp
+  
+  leave
+  ret
+
 render_field:
   ENTER
 
@@ -11,10 +33,37 @@ render_field:
   .set columns, -4
   .set lines, -8 
 
+  xor eax, eax
+  xor ebx, ebx
+  call print_space  // печатаем space
+  call print_space  // печатаем space
 
+numbers_loop:
+  movb numbers(ebx), al  // кладем в al цифру
+  push eax
+  call putchar
+  add $4, esp
+  cmp $9, ebx
+  jz numbers_out
+
+  incl ebx
+  call print_space  // печатаем space
+  jmp numbers_loop
+
+numbers_out:
+  call print_newline
+
+  xor ebx, ebx
 loop:
   xor eax, eax
   xor ecx, ecx
+
+  movb numbers(ebx), al  // кладем в al цифру
+  push eax
+  call putchar
+  add $4, esp
+  incl ebx
+  call print_space  // печатаем space
 
   loop2:  // печатаем колонки
     movb closed_cell, al  // кладем в al '#'
@@ -28,10 +77,7 @@ loop:
     incl ecx  // инрементим счетчик
     movl ecx, columns(ebp)
 
-    movb space, al  // кладем в al space 
-    push eax
-    call putchar
-    add $4, esp
+    call print_space
     jmp loop2
 
   out2:
@@ -39,10 +85,7 @@ loop:
     xor ecx, ecx
     movl ecx, columns(ebp) // обновляем счетчик колонок
 
-    movb newline, al  // кладем в al '\n'
-    push eax
-    call putchar  // печатаем новую строку
-    add $4, esp
+    call print_newline
 
     movl lines(ebp), ecx  // смотрим на наш счетчик 
     cmp $9, ecx
@@ -86,4 +129,4 @@ space:
   .byte 32
 
 numbers:
-  .asciz "0123456789"
+  .ascii "0123456789"
