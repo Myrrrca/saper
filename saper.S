@@ -99,11 +99,23 @@ out:
   leave
   ret
 
+print_instructions:
+  ENTER
+
+  push $instructions 
+  call puts 
+  add $4, esp
+
+  leave
+  ret
+
+
 main:
   ENTER
   xor eax, eax
 
   call render_field
+  call print_instructions
   
 
   leave
@@ -130,3 +142,6 @@ space:
 
 numbers:
   .ascii "0123456789"
+
+instructions:
+  .asciz "enter the column number and line number separated by space and press enter:"
