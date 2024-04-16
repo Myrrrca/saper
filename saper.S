@@ -2,6 +2,7 @@
 
   .global main
   .global instructions
+  .global real_field_text
   .global cells
   .global newline
   .global space
@@ -10,6 +11,7 @@
   .global mine
   .global cursor
   .global open_empty_cell
+  .global scanf_separator
   .att_syntax noprefix
 
 init_cells:
@@ -57,30 +59,36 @@ main:
   ENTER
 
   call init_cells
-
-/*
-  push $cells
-  push $cursor_row
-  push $cursor_column
-  call render_field
-  add $12, esp
-  */
-
-  //call print_newline
+  call print_real_field_text
   call check_field
-  //call print_instructions
+  call print_newline
 
+  //movl $1, cursor_column
+  //movl $1, cursor_row
 
+  xor eax, eax
+loop:
+  push eax
 
-  movl $1, cursor_column
-  movl $1, cursor_row
-  
+  call print_instructions
+
+  push $cursor_column
+  push $cursor_row
+  call write_cursor_location
+  add $8, esp
+
   push $cursor_column
   push $cursor_row
   call render_field
   add $8, esp
   
+  pop eax
+  cmp $99, eax
+  jz out
+  incl eax
+  jmp loop
 
+out:
   leave
   ret
 
@@ -108,6 +116,12 @@ numbers:
 
 instructions:
   .asciz "enter the column number and line number separated by space and press enter:"
+
+real_field_text:
+  .asciz "here is real field:"
+
+scanf_separator:
+  .asciz "%d %d"
 
   .bss
 cells:
