@@ -8,6 +8,8 @@
   .global numbers
   .global closed_cell
   .global mine
+  .global cursor
+  .global open_empty_cell
   .att_syntax noprefix
 
 init_cells:
@@ -26,7 +28,7 @@ fill_cells:
 
   xor eax, eax
   movb rand(, edx, 1), al  // заполняем sl случайно заполненным байтом
-  cmp $25, eax  // 10% клетка становится миной 
+  cmp $20, eax  // 13% шанс клетка становится миной 
   jc do_mine
 
   movb $0, cells(,edx, 2)  // клетка не мина
@@ -51,17 +53,32 @@ cells_end:
   leave
   ret
 
-
-
 main:
   ENTER
-  xor eax, eax
 
-  // call render_field
-   call init_cells
-   call check_field
-  // call print_instructions
-  // call read_numbers
+  call init_cells
+
+/*
+  push $cells
+  push $cursor_row
+  push $cursor_column
+  call render_field
+  add $12, esp
+  */
+
+  //call print_newline
+  call check_field
+  //call print_instructions
+
+
+
+  movl $1, cursor_column
+  movl $1, cursor_row
+  
+  push $cursor_column
+  push $cursor_row
+  call render_field
+  add $8, esp
   
 
   leave
@@ -105,7 +122,7 @@ rand:
 
 .data
 cursor_row:
-  .byte 0
+  .int 0
 
 cursor_column:
-  .byte 0
+  .int 0

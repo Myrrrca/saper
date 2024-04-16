@@ -4,19 +4,30 @@
   .global render_field
   
 render_field:
-  ENTER
+ ENTER
+ XORALL
 
   push $0
   push $0
   .set columns, -4
   .set lines, -8 
+  .set cursor_row, 8
+  .set cursor_column, 12
 
-  xor eax, eax
-  xor ebx, ebx
+  movl cursor_row(ebp), edx 
+  movl (edx), eax
+  imul $10, eax
+  movl cursor_column(ebp), edx 
+  movl (edx), ecx
+  add ecx, eax
+  leal cells, edx
+  movb $1, 1(edx, eax, 2)
+
+  XORALL
   call print_space  // печатаем space
   call print_space  // печатаем space
 
-numbers_loop:
+numbers_loop:  // печатаем первую строку цифр
   movb numbers(ebx), al  // кладем в al цифру
   push eax
   call putchar
@@ -31,8 +42,8 @@ numbers_loop:
 numbers_out:
   call print_newline
 
-  xor ebx, ebx
-loop:
+  xor ebx, ebx  // счетчик для цифр
+loop:  // печатаем 10 строчек
   xor eax, eax
   xor ecx, ecx
 
@@ -43,35 +54,60 @@ loop:
   incl ebx
   call print_space  // печатаем space
 
-  loop2:  // печатаем колонки
-    movb closed_cell, al  // кладем в al '#'
-    push eax
-    call putchar
-    add $4, esp
-    movl columns(ebp), ecx  // смотрим на наш счетчик 
-    cmp $9, ecx
-    jz out2
+  loop_field:  // печатаем 10 строчек
+  // ecx -- колонки
+  // eax -- строки
 
-    incl ecx  // инрементим счетчик
-    movl ecx, columns(ebp)
-
-    call print_space
-    jmp loop2
-
-  out2:
+    movl columns(ebp), ecx
+    movl lines(ebp), eax
+    imul $10, eax
+    add eax, ecx  // ecx -- номер ячейки 
+    
     xor eax, eax
-    xor ecx, ecx
-    movl ecx, columns(ebp) // обновляем счетчик колонок
+    leal cells, edx
+    movb 1(edx, ecx, 2), al  // открываем ячейку
+    cmp $0, al
+    jz print_closed_cell
 
-    call print_newline
 
-    movl lines(ebp), ecx  // смотрим на наш счетчик 
-    cmp $9, ecx
-    jz out
+    movb 0(edx, ecx, 2), al  // смотрим мина или нет
+    cmp $1, al
+    jz found_mine
+    push open_empty_cell 
+    jmp print_cell
 
-    incl ecx  // инрементим счетчик
-    movl ecx, lines(ebp)
-    jmp loop
+found_mine:
+  push mine
+  jmp print_cell
+
+print_closed_cell:
+  push closed_cell
+
+print_cell:
+  call putchar
+  add $4, esp
+
+  movl columns(ebp), ecx
+  incl ecx
+  movl ecx, columns(ebp)
+  cmp $10, ecx
+  jz make_newline
+  call print_space
+  jmp loop_field
+
+make_newline:
+  xor ecx, ecx
+  movl ecx, columns(ebp)
+
+  call print_newline
+
+  movl lines(ebp), eax
+  cmp $9, eax
+  jz out
+ 
+ incl eax
+ movl eax, lines(ebp)
+ jmp loop
 
 out:
   leave

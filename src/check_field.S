@@ -16,23 +16,23 @@ check_field:  // отображает все поле в открытом вид
   call print_space  // печатаем space
   call print_space  // печатаем space
 
-numbers_loop_:  // печатаем первую строку цифр
+numbers_loop:  // печатаем первую строку цифр
   movb numbers(ebx), al  // кладем в al цифру
   push eax
   call putchar
   add $4, esp
   cmp $9, ebx
-  jz numbers_out_
+  jz numbers_out
 
   incl ebx
   call print_space  // печатаем space
-  jmp numbers_loop_
+  jmp numbers_loop
 
-numbers_out_:
+numbers_out:
   call print_newline
 
   xor ebx, ebx  // счетчик для цифр
-loop_:  // печатаем 10 строчек
+loop:  // печатаем 10 строчек
   xor eax, eax
   xor ecx, ecx
 
@@ -43,56 +43,51 @@ loop_:  // печатаем 10 строчек
   incl ebx
   call print_space  // печатаем space
 
-  loop2_:  // печатаем колонки
+  loop_field:  // печатаем 10 строчек
+  // ecx -- колонки
+  // eax -- строки
 
-    movl columns(ebp), eax  // смотрим на наш счетчик колонок
-    incl eax
-
-    movl lines(ebp), ecx  // смотрим на наш счетчик строк 
-    incl ecx
-    
-    imul ecx, eax 
-    mov eax, ecx 
-    dec ecx // получаем общее количество итераций (ячеек) в ecx
+    movl columns(ebp), ecx
+    movl lines(ebp), eax
+    imul $10, eax
+    add eax, ecx  // ecx -- номер ячейки 
     
     xor eax, eax
-    movb cells(,ecx, 2), al 
+    movb cells(, ecx, 2), al
     cmp $0, al
-    jz store_closed_cell 
-    push mine
-    jmp print_cell 
+    jz print_closed_cell
+    push mine  
+    jmp print_cell
 
-store_closed_cell:
-    push closed_cell
+print_closed_cell:
+  push open_empty_cell
 
 print_cell:
-    call putchar
-    add $4, esp
-    movl columns(ebp), ecx  // смотрим на наш счетчик 
-    cmp $9, ecx
-    jz out2_
+  call putchar
+  add $4, esp
 
-    incl ecx  // инрементим счетчик
-    movl ecx, columns(ebp)
+  movl columns(ebp), ecx
+  incl ecx
+  movl ecx, columns(ebp)
+  cmp $10, ecx
+  jz make_newline
+  call print_space
+  jmp loop_field
 
-    call print_space
-    jmp loop2_
+make_newline:
+  xor ecx, ecx
+  movl ecx, columns(ebp)
 
-  out2_:
-    xor eax, eax
-    xor ecx, ecx
-    movl ecx, columns(ebp) // обновляем счетчик колонок
+  call print_newline
 
-    call print_newline
+  movl lines(ebp), eax
+  cmp $9, eax
+  jz out
+ 
+ incl eax
+ movl eax, lines(ebp)
+ jmp loop
 
-    movl lines(ebp), ecx  // смотрим на наш счетчик 
-    cmp $9, ecx
-    jz out_
-
-    incl ecx  // инрементим счетчик
-    movl ecx, lines(ebp)
-    jmp loop_
-
-out_:
+out:
   leave
   ret
