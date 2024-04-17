@@ -54,13 +54,15 @@ loop:  // печатаем 10 строчек
     
     xor eax, eax
     movb cells(, ecx, 2), al
-    cmp $0, al
-    jz print_closed_cell
-    push mine  
+    cmp $1, al
+    jz print_mine
+    movb cells(,ecx, 2), al
+    push eax
     jmp print_cell
 
-print_closed_cell:
-  push open_empty_cell
+print_mine:
+    push mine  
+
 
 print_cell:
   call putchar
