@@ -12,6 +12,7 @@
   .global cursor
   .global open_empty_cell
   .global scanf_separator
+  .global lose_text
   .att_syntax noprefix
 
 init_cells:
@@ -270,13 +271,17 @@ main:
   ENTER
 
   call init_cells
-  call print_real_field_text
-  call check_field
+  // call print_real_field_text
+  // call check_field
   call print_newline
   call init_numbers
 
    //movl $1, cursor_column
   //movl $1, cursor_row
+  push $cursor_column
+  push $cursor_row
+  call render_field
+  add $8, esp
   
   xor eax, eax
 loop:
@@ -291,8 +296,14 @@ loop:
 
   push $cursor_column
   push $cursor_row
+  call update_field
+  add $8, esp
+
+  push $cursor_column
+  push $cursor_row
   call render_field
   add $8, esp
+
   
   pop eax
   cmp $99, eax
@@ -332,6 +343,9 @@ instructions:
 real_field_text:
   .asciz "here is real field:"
 
+lose_text:
+  .asciz "you lost!"
+
 scanf_separator:
   .asciz "%d %d"
 
@@ -346,9 +360,10 @@ cells:
 rand:
   .skip 10 * 10
 
-.data
+  .data
 cursor_row:
   .int 0
 
 cursor_column:
   .int 0
+

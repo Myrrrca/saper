@@ -17,3 +17,16 @@
   xor edx, edx
 .endm
 
+.macro PUSHA
+  push eax
+  push ebx
+  push ecx
+  push edx
+.endm
+
+.macro POPA
+  pop edx
+  pop ecx
+  pop ebx
+  pop eax
+.endm
