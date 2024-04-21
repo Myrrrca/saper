@@ -29,14 +29,14 @@ update_field:
   jz opened_first_cell
   cmp $9, eax
   jz opened_top_right
-  cmp $10, eax
-  jbe opened_first_row
-  cmp $90, eax
-  jge opened_last_row
   cmp $99, eax
   jz opened_last_cell
   cmp $90, eax
   jz opened_bottom_left
+  cmp $10, eax
+  jbe opened_first_row
+  cmp $90, eax
+  jge opened_last_row
 
   xor edx, edx  // остаток от деления
   // в eax число которое делим
