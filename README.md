@@ -3,7 +3,7 @@
 ### Overview
 This implementation of the classic game "Saper" is written in GAS (GNU Assembly) in 32-bit mode.
 
-![Saper Overview](./img/overview_1.png)
+![Saper Overview](./img/overview1.png?raw=true)
 
 ### Usage
 #### Prerequisites
