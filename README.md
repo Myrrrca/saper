@@ -23,11 +23,11 @@ sudo dnf install glibc-devel.i686 glibc.i686 libgcc.i686
 4. Simply type the column number and line number separated by space and press enter to make your guess
 
 #### Features
-[x]  Random field generation  
-[x]  Recursive opening of empty cells  
-[x]  You can actually win or lose  
-[ ]  Displaying neighboring mines horizontally (I forgot that this rule exists -_-)  
-[ ]  The ability to put "flags" on any cells to mark potential mines  
+- [x]  Random field generation
+- [x]  Recursive opening of empty cells
+- [x]  You can actually win or lose
+- [ ]  Displaying neighboring mines horizontally (I forgot that this rule exists -_-)
+- [ ]  The ability to put "flags" on any cells to mark potential mines
 
 #### Additional Information
 - Please report any bugs or issues on the project's GitHub Issues page (https://github.com/Myrrrca/saper), providing  details of an issue
