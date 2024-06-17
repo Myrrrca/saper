@@ -10,6 +10,7 @@ This implementation of the classic game "Saper" is written in GAS (GNU Assembly)
 Before cloning and building the project, ensure you have the necessary libraries for building applications in 32-bit mode, such as glibc, libgcc, etc. If you are using Fedora Linux, you can install them with the following command:
 ```bash
 sudo dnf install glibc-devel.i686 glibc.i686 libgcc.i686
+```
 
 #### Steps to Build and Run
 1. Clone the repository locally:
